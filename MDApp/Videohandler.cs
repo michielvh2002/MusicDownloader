@@ -37,11 +37,11 @@ namespace MDApp
             IStreamInfo streamInfo = streamManifest.GetAudioOnlyStreams().GetWithHighestBitrate();
             
             //Console.WriteLine(streamInfo.Container);
-            await youtube.Videos.Streams.DownloadAsync(streamInfo, $"{vid.Title}.{streamInfo.Container}");
+            await youtube.Videos.Streams.DownloadAsync(streamInfo, $"{vid.Title}.mp3");
             return true;
         }
 
-        public async Task<bool> DownloadPlaylist(string url, string type)
+        public async Task<bool> DownloadPlaylist(string url, VideoType type)
         {
 
             if (string.IsNullOrWhiteSpace(url))
@@ -59,9 +59,9 @@ namespace MDApp
             {
                 switch (type)
                 {
-                    case "mp4": await DownloadAsMp4(video.Url);
+                    case VideoType.MP4: await DownloadAsMp4(video.Url);
                         break;
-                    case "mp3": await DownloadAsMp3(video.Url);
+                    case VideoType.MP3: await DownloadAsMp3(video.Url);
                         break;
                     default:
                         break;

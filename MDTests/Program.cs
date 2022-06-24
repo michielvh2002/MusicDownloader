@@ -23,7 +23,7 @@ namespace MDTest
                 //if (download) Console.WriteLine("Succes");
                 //else Console.WriteLine("Failed");
 
-                await handler.DownloadPlaylist("https://www.youtube.com/watch?v=HA1srD2DwaI&list=OLAK5uy_kZ2MLSNGjLRXP7OfUMs23Qv57SBRTIZIk", "mp3");
+                await handler.DownloadPlaylist("https://www.youtube.com/watch?v=HA1srD2DwaI&list=OLAK5uy_kZ2MLSNGjLRXP7OfUMs23Qv57SBRTIZIk", VideoType.MP3);
             }
             catch (Exception ex)
             {
