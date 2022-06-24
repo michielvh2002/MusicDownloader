@@ -46,11 +46,10 @@ namespace MDApp
 
             if (string.IsNullOrWhiteSpace(url))
                 throw new ArgumentException("Url can not be empty");
-            if (!url.Contains("list="))
-                throw new ArgumentException("This is not a playlist");
             if (!url.Contains("youtube")) throw new ArgumentException("Only yt bro");
 
             string? playlistId = HttpUtility.ParseQueryString(url).Get("list");
+            if (playlistId is null) throw new ArgumentException("This is not a playlist");
 
             var playList = await youtube.Playlists.GetAsync(playlistId);
             var videos = youtube.Playlists.GetVideosAsync(playList.Id);
