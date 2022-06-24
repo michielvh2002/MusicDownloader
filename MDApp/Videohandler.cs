@@ -2,6 +2,7 @@
 using YoutubeExplode.Videos;
 using YoutubeExplode.Videos.Streams;
 using YoutubeExplode.Converter;
+using System.Web;
 
 namespace MDApp
 {
@@ -35,7 +36,7 @@ namespace MDApp
 
             IStreamInfo streamInfo = streamManifest.GetAudioOnlyStreams().GetWithHighestBitrate();
             
-            Console.WriteLine(streamInfo.Container);
+            //Console.WriteLine(streamInfo.Container);
             await youtube.Videos.Streams.DownloadAsync(streamInfo, $"{vid.Title}.{streamInfo.Container}");
             return true;
         }
@@ -49,7 +50,9 @@ namespace MDApp
                 throw new ArgumentException("This is not a playlist");
             if (!url.Contains("youtube")) throw new ArgumentException("Only yt bro");
 
-            var playList = await youtube.Playlists.GetAsync("PL_9VHR_SV37ZQ4J66LnNp2haPdiyDmuef");
+            string? playlistId = HttpUtility.ParseQueryString(url).Get("list");
+
+            var playList = await youtube.Playlists.GetAsync(playlistId);
             var videos = youtube.Playlists.GetVideosAsync(playList.Id);
 
             await foreach (var video in videos)

@@ -11,35 +11,35 @@ namespace MDTest
         private static async void printAsync()
         {
             Videohandler handler = new();
-            var yes = await handler.GetMetaData("https://www.youtube.com/watch?v=l2hA8g1cNvQ");
+            //var yes = await handler.GetMetaData("https://www.youtube.com/watch?v=l2hA8g1cNvQ");
 
-            Console.WriteLine(yes.Author);
-            Console.WriteLine(yes.Description);
-            Console.WriteLine(yes.Duration);
+            //Console.WriteLine(yes.Author);
+            //Console.WriteLine(yes.Description);
+            //Console.WriteLine(yes.Duration);
 
             try
             {
-                bool download = await handler.DownloadAsMp3("https://www.youtube.com/watch?v=l2hA8g1cNvQ");
-                if (download) Console.WriteLine("Succes");
-                else Console.WriteLine("Failed");
+                //bool download = await handler.DownloadAsMp3("https://www.youtube.com/watch?v=HA1srD2DwaI&list=OLAK5uy_kZ2MLSNGjLRXP7OfUMs23Qv57SBRTIZIk");
+                //if (download) Console.WriteLine("Succes");
+                //else Console.WriteLine("Failed");
 
-                await handler.DownloadPlaylistAsMp4("hhttps://www.youtube.com/watch?v=nCg3ufihKyU&list=PL_9VHR_SV37ZQ4J66LnNp2haPdiyDmuef");
+                await handler.DownloadPlaylist("https://www.youtube.com/watch?v=HA1srD2DwaI&list=OLAK5uy_kZ2MLSNGjLRXP7OfUMs23Qv57SBRTIZIk", "mp3");
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
 
-            try
-            {
-                bool download = await handler.DownloadAsMp4("https://www.youtube.com/watch?v=MF1qEhBSfq4");
-                if (download) Console.WriteLine("Succes");
-                else Console.WriteLine("Failed");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+            //try
+            //{
+            //    bool download = await handler.DownloadAsMp4("https://www.youtube.com/watch?v=MF1qEhBSfq4");
+            //    if (download) Console.WriteLine("Succes");
+            //    else Console.WriteLine("Failed");
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine(ex.Message);
+            //}
 
 
         }
