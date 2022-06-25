@@ -3,6 +3,7 @@ using YoutubeExplode.Videos;
 using YoutubeExplode.Videos.Streams;
 using YoutubeExplode.Converter;
 using System.Web;
+using System.Text.RegularExpressions;
 
 namespace MDApp
 {
@@ -14,39 +15,41 @@ namespace MDApp
             return await youtube.Videos.GetAsync(url);
         }
 
-        public async Task<bool> DownloadAsMp4(string url)
+        public async void DownloadAsMp4(string url)
         {
             var vid = await GetMetaData(url);
-            return await DownloadMp4(vid);
-        }
-        private async Task<bool> DownloadMp4(Video vid)
-        {
             var streamManifest = await youtube.Videos.Streams.GetManifestAsync(vid.Id);
 
             var streamInfo = streamManifest.GetMuxedStreams().GetWithHighestVideoQuality();
 
-            await youtube.Videos.Streams.DownloadAsync(streamInfo, $"{vid.Title}.{streamInfo.Container}");
-            return true;
+            string title = vid.Title;
+            for (int i = 0; i < vid.Title.Length; i++)
+            {
+                if (!char.IsLetterOrDigit(vid.Title[i]))
+                {
+                    title = vid.Title.Substring(0, i);
+                    break;
+                }
+            }
+
+            await youtube.Videos.Streams.DownloadAsync(streamInfo, $"{title}.mp4");
         }
 
-        public async Task<bool> DownloadAsMp3(string url)
+        public async void DownloadAsMp3(string url)
         {
             Video vid = await GetMetaData(url);
             StreamManifest streamManifest = await youtube.Videos.Streams.GetManifestAsync(vid.Id);
 
             IStreamInfo streamInfo = streamManifest.GetAudioOnlyStreams().GetWithHighestBitrate();
-            
-            //Console.WriteLine(streamInfo.Container);
+
             await youtube.Videos.Streams.DownloadAsync(streamInfo, $"{vid.Title}.mp3");
-            return true;
         }
 
-        public async Task<bool> DownloadPlaylist(string url, VideoType type)
+        public async void DownloadPlaylist(string url, VideoType type, Action a)
         {
-
             if (string.IsNullOrWhiteSpace(url))
                 throw new ArgumentException("Url can not be empty");
-            if (!url.Contains("youtube")) throw new ArgumentException("Only yt bro");
+            if (!url.Contains("youtu")) throw new ArgumentException("Only yt bro");
 
             string? playlistId = HttpUtility.ParseQueryString(url).Get("list");
             if (playlistId is null) throw new ArgumentException("This is not a playlist");
@@ -58,15 +61,15 @@ namespace MDApp
             {
                 switch (type)
                 {
-                    case VideoType.MP4: await DownloadAsMp4(video.Url);
+                    case VideoType.MP4: DownloadAsMp4(video.Url);
                         break;
-                    case VideoType.MP3: await DownloadAsMp3(video.Url);
+                    case VideoType.MP3: DownloadAsMp3(video.Url);
                         break;
                     default:
                         break;
                 }
             }
-            return true;
+            a();
         }
     }
 }
