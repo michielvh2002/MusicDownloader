@@ -25,9 +25,9 @@ namespace MDApp
             string title = vid.Title;
             for (int i = 0; i < vid.Title.Length; i++)
             {
-                if (!char.IsLetterOrDigit(vid.Title[i]))
+                if (vid.Title[i] != '/' && vid.Title[i] != '\\')
                 {
-                    title = vid.Title.Substring(0, i);
+                    title = vid.Title.Substring(0, i - 1);
                     break;
                 }
             }
@@ -42,14 +42,24 @@ namespace MDApp
 
             IStreamInfo streamInfo = streamManifest.GetAudioOnlyStreams().GetWithHighestBitrate();
 
-            await youtube.Videos.Streams.DownloadAsync(streamInfo, $"{vid.Title}.mp3");
+            string title = vid.Title;
+            for (int i = 0; i < vid.Title.Length; i++)
+            {
+                if (vid.Title[i] != '/' && vid.Title[i] != '\\')
+                {
+                    title = vid.Title.Substring(0, i - 1);
+                    break;
+                }
+            }
+
+            await youtube.Videos.Streams.DownloadAsync(streamInfo, $"{title}.mp3");
         }
 
         public async void DownloadPlaylist(string url, VideoType type, Action a)
         {
             if (string.IsNullOrWhiteSpace(url))
                 throw new ArgumentException("Url can not be empty");
-            if (!url.Contains("youtu")) throw new ArgumentException("Only yt bro");
+            if (!url.Contains("youtube")) throw new ArgumentException("Only yt bro");
 
             string? playlistId = HttpUtility.ParseQueryString(url).Get("list");
             if (playlistId is null) throw new ArgumentException("This is not a playlist");
