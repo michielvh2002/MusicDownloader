@@ -15,7 +15,7 @@ namespace MDApp
             return await youtube.Videos.GetAsync(url);
         }
 
-        public async void DownloadAsMp4(string url)
+        public async Task<bool> DownloadAsMp4(string url)
         {
             var vid = await GetMetaData(url);
             var streamManifest = await youtube.Videos.Streams.GetManifestAsync(vid.Id);
@@ -33,26 +33,34 @@ namespace MDApp
             }
 
             await youtube.Videos.Streams.DownloadAsync(streamInfo, $"{title}.mp4");
+            return true;
         }
 
-        public async void DownloadAsMp3(string url)
+        public async Task<bool> DownloadAsMp3(string url)
         {
-            Video vid = await GetMetaData(url);
-            StreamManifest streamManifest = await youtube.Videos.Streams.GetManifestAsync(vid.Id);
-
-            IStreamInfo streamInfo = streamManifest.GetAudioOnlyStreams().GetWithHighestBitrate();
-
-            string title = vid.Title;
-            for (int i = 0; i < vid.Title.Length; i++)
+            try
             {
-                if (vid.Title[i] != '/' && vid.Title[i] != '\\')
-                {
-                    title = vid.Title.Substring(0, i - 1);
-                    break;
-                }
-            }
+                Console.WriteLine(url);
+                Video vid = await GetMetaData(url);
+                StreamManifest streamManifest = await youtube.Videos.Streams.GetManifestAsync(vid.Id);
+                IStreamInfo streamInfo = streamManifest.GetAudioOnlyStreams().GetWithHighestBitrate();
+                string title = vid.Title.Replace('/', ' ');
+                title = title.Replace('\\', ' ');
+                title = title.Replace('*', ' ');
+                title = title.Replace('|', ' ');
+                title = title.Replace('"', ' ');
+                if (title.Length > 30) title = title.Substring(0, 30);
 
-            await youtube.Videos.Streams.DownloadAsync(streamInfo, $"{title}.mp3");
+
+                await youtube.Videos.Streams.DownloadAsync(streamInfo, $"{title}.mp3");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return true;
+
+
         }
 
         public async void DownloadPlaylist(string url, VideoType type, Action a)
@@ -71,9 +79,9 @@ namespace MDApp
             {
                 switch (type)
                 {
-                    case VideoType.MP4: DownloadAsMp4(video.Url);
+                    case VideoType.MP4: await DownloadAsMp4("https://www.youtube.com/watch?v=" + video.Id);
                         break;
-                    case VideoType.MP3: DownloadAsMp3(video.Url);
+                    case VideoType.MP3: await DownloadAsMp3("https://www.youtube.com/watch?v=" + video.Id);
                         break;
                     default:
                         break;
