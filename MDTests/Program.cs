@@ -7,8 +7,8 @@ namespace MDTest
         public static void Main()
         {
             //DownloadMP3();
-            //DownloadPlaylistMP3();
-            DownloadPlaylistMP4();
+            DownloadPlaylistMP3();
+            //DownloadPlaylistMP4();
             Thread.Sleep(100000);
         }
         private static void DownloadMP3()
